@@ -1,18 +1,23 @@
 <template>
   <div>
-    <h1>List Task Today</h1>
+    <h1>List Task</h1>
     <form v-on:submit.prevent="addTask">
-      <input
-        v-model="dataTask.description"
-        type="text"
-        placeholder="Enter a description"
-      />
-      <input
+      <b-form-input
         v-model="dataTask.title"
         type="text"
         placeholder="Enter a new task"
       />
-      <button type="submit">Add Task</button>
+      <b-form-input
+        v-model="dataTask.description"
+        type="text"
+        placeholder="Enter a description"
+      />
+      <b-form-input
+        v-model="dataTask.date"
+        type="date"
+        placeholder="Enter a description"
+      />
+      <b-button type="submit">Add Task</b-button>
     </form>
     <ul>
       <li v-for="(task, index) in tasks" :key="index">
@@ -33,8 +38,10 @@ export default {
     return {
       tasks: [],
       dataTask: {
+        userId: this.$route.params.id,
         title: "",
         description: "",
+        date: Date(),
         done: false,
       },
       editingTaskIndex: null,
@@ -46,6 +53,7 @@ export default {
       if (this.dataTask.title.trim()) {
         this.tasks.push(this.dataTask);
         this.newTask = "";
+        console.log(this.dataTask.date);
       }
     },
     updateTask(index) {
