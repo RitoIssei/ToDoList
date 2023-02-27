@@ -1,18 +1,18 @@
 <template>
-  <div class="home">
-    <CaLen />
+  <div class="user">
+    <TodoList />
     <router-view />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import CaLen from "@/components/CaLen.vue";
+import TodoList from "@/components/TodoList.vue";
 
 export default {
-  name: "HomeView",
+  name: "UserView",
   components: {
-    CaLen,
+    TodoList,
   },
 };
 </script>
