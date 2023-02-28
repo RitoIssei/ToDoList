@@ -1,86 +1,136 @@
 <template>
-  <div>
+  <div class="main">
     <h1>List Task</h1>
-    <form v-on:submit.prevent="addTask">
+    <form v-on:submit.prevent="addTask" class="input mt-3">
       <b-form-input
-        v-model="dataTask.title"
+        v-model="title"
         type="text"
         placeholder="Enter a new task"
       />
       <b-form-input
-        v-model="dataTask.description"
+        v-model="description"
         type="text"
         placeholder="Enter a description"
       />
       <b-form-input
-        v-model="dataTask.date"
+        v-model="date"
         type="date"
         placeholder="Enter a description"
       />
-      <b-button type="submit">Add Task</b-button>
+      <b-button class="mt-3" type="submit">Add Task</b-button>
     </form>
-    <ul>
-      <li v-for="(task, index) in tasks" :key="index">
-        <input type="checkbox" v-model="task.done" />
-        <span :class="{ 'task-done': task.done }">{{ task.title }}</span>
-        <button @click="updateTask(index)">Edit</button>
-        <input v-model="fixTask" type="text" placeholder="Enter a new task" />
-        <button @click="deleteTask(index)">Delete</button>
-      </li>
-    </ul>
+    <div>
+      <Search />
+    </div>
+    <div>
+      <Calendar />
+    </div>
+    <b-list-group>
+      <b-list-group-item
+        v-for="(task, index) in tasks"
+        :key="index"
+        class="d-flex flex-row mt-3"
+      >
+        <div
+          :class="{ 'task-done': task.done }"
+          class="TaskDetail"
+          v-b-modal.modal-1
+          @click="openModal(task)"
+        >
+          {{ task.title }}
+        </div>
+        <div class="TaskDone">
+          <b-form-checkbox v-model="task.done" />
+        </div>
+      </b-list-group-item>
+    </b-list-group>
+    <ModalTaskDetail :task="selectedTask" />
   </div>
 </template>
 
 <script>
+import ModalTaskDetail from "@/components/ModalTaskDetail.vue";
+import Search from "@/components/Search.vue";
+import Calendar from "@/components/Calendar.vue";
+
 export default {
   name: "TodoList",
+  components: {
+    ModalTaskDetail,
+    Search,
+    Calendar,
+  },
+  computed: {
+    tasks() {
+      return this.$store.state.tasks;
+    },
+  },
   data() {
     return {
-      tasks: [],
-      dataTask: {
-        userId: this.$route.params.id,
-        title: "",
-        description: "",
-        date: Date(),
-        done: false,
-      },
-      editingTaskIndex: null,
-      fixTask: "",
+      title: "",
+      description: "",
+      date: Date(),
+      selectedTask: {},
     };
   },
   methods: {
+    openModal(task) {
+      this.selectedTask = task;
+      //this.$refs.myModal.show();
+      console.log(task);
+    },
     addTask() {
-      if (this.dataTask.title.trim()) {
-        this.tasks.push(this.dataTask);
-        this.newTask = "";
-        console.log(this.dataTask.date);
-      }
-    },
-    updateTask(index) {
-      this.editingTaskIndex = index;
-      if (this.fixTask.trim() && this.editingTaskIndex !== null) {
-        console.log(this.fixTask.trim());
-        this.tasks[this.editingTaskIndex].title = this.fixTask;
-        this.fixTask = "";
-        this.editingTaskIndex = null;
-      }
-    },
-    deleteTask(index) {
-      this.tasks.splice(index, 1);
-    },
-  },
-  watch: {
-    newTask() {
-      if (this.editingTaskIndex !== null) {
-        this.updateTask();
-      }
+      const newTask = {
+        userId: this.$route.params.id,
+        title: this.title,
+        description: this.description,
+        date: this.date,
+        done: false,
+      };
+      this.$store.dispatch("addTask", newTask);
+      console.log(newTask);
+      this.title = "";
+      this.description = "";
+      this.date = "";
+      this.done = false;
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
+.input {
+  display: flex;
+}
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5% auto 0 auto;
+  padding: 3% 5% 5% 5%;
+  width: 900px;
+  background-color: var(--bs-gray-dark);
+  border-radius: 10px;
+}
 .task-done {
   text-decoration: line-through;
+}
+.TaskDone {
+  border-left: 2px solid var(--bs-gray-dark);
+  height: 100%;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+}
+.TaskDetail {
+  flex-basis: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+h1 {
+  color: var(--bs-gray-100);
 }
 </style>
