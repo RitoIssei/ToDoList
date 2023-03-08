@@ -1,10 +1,21 @@
 <template>
-  <div class="home">
-    <b-tabs class="home__content">
-      <SignIn />
-      <SignUp />
-    </b-tabs>
-  </div>
+  <b-row>
+    <b-col class="mt-5">
+      <h1 class="text-center">TO DO LIST</h1>
+      <b-card class="main shadow mt-5">
+        <SignIn v-show="show" />
+        <SignUp v-show="!show" />
+        <div v-show="show" class="text-center mt-3">
+          Don't have an account?
+          <a @click.prevent="show = !show" href="">Register here</a>
+        </div>
+        <div v-show="!show" class="text-center mt-3">
+          Do you already have an account?
+          <a @click.prevent="show = !show" href="">Login here</a>
+        </div>
+      </b-card>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
@@ -18,22 +29,20 @@ export default {
     SignIn,
     SignUp,
   },
+  data() {
+    return {
+      show: true,
+    };
+  },
 };
 </script>
 <style>
-.home {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-image: url(@/assets/background-home1.jpg);
+.main {
+  flex-grow: 1;
+  max-width: 600px;
+  margin: auto;
 }
-.home__content {
-  width: 60%;
-  max-width: 500px;
-  margin: 5% auto;
-}
-
-label {
-  color: #eec6c6;
-}
+/* .my-tab {
+  height: 360px;
+} */
 </style>

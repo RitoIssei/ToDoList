@@ -1,49 +1,75 @@
 <template>
   <div>
     <b-modal id="modal-1" title="Task detail" ok-title="Save" @ok="saveChanges">
-      <b-list-group>
-        <b-list-group-item class="d-flex flex-row">
-          <b-input-group prepend="Title" class="mt-3">
-            <b-form-input
-              :value="this.task.title"
-              ref="editTitle"
-            ></b-form-input>
-          </b-input-group>
-        </b-list-group-item>
-        <b-list-group-item>
-          <b-input-group prepend="Description" class="mt-3">
-            <b-form-input
-              :value="this.task.description"
-              ref="editDescription"
-            ></b-form-input>
-          </b-input-group>
-        </b-list-group-item>
-      </b-list-group>
+      <b-form-group label="Title:" class="mt-3">
+        <b-form-input :value="task.title" @input="editTitle"></b-form-input>
+      </b-form-group>
+      <b-form-group label="Description:" class="mt-3">
+        <b-form-input
+          :value="task.description"
+          @input="editDescription"
+        ></b-form-input>
+      </b-form-group>
+      <b-form-group label="Date:" class="mt-3">
+        <date-picker :value="task.date" @input="editDate"></date-picker>
+      </b-form-group>
     </b-modal>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import DatePicker from "vue2-datepicker";
+import "vue2-datepicker/index.css";
+
 export default {
   name: "ModalTaskDetail",
-  props: {
-    task: {
-      type: Object,
-    },
+  components: {
+    DatePicker,
   },
-
+  props: {
+    task: Object,
+    index: Number,
+  },
   data() {
-    return {};
+    return {
+      newTitle: "",
+      newDescription: "",
+      newDate: new Date(),
+    };
   },
   methods: {
+    ...mapActions(["updateTask"]),
+    editTitle(event) {
+      this.newTitle = event;
+      console.log(event);
+    },
+    editDescription(event) {
+      this.newDescription = event;
+      console.log(event);
+    },
+    editDate(event) {
+      this.newDate = event;
+      console.log(event);
+    },
     saveChanges() {
-      console.log(task);
+      if (this.newDescription === "") {
+        this.newDescription = this.task.description;
+      }
+      if (this.newTitle === "") {
+        this.newTitle = this.task.title;
+      }
+      const newTask = {
+        userId: this.$route.params.id,
+        title: this.newTitle,
+        description: this.newDescription,
+        date: this.newDate,
+        done: false,
+      };
+      console.log(new Date());
+      console.log(this.task.date);
+      this.updateTask({ index: this.index, task: newTask });
     },
   },
-  //   created() {
-  //     editTitle = this.task.title;
-  //     editDescription = this.task.description;
-  //     console.log(editTitle);
-  //   },
 };
 </script>

@@ -1,28 +1,43 @@
 <template>
-  <b-tab title="Sign in">
-    <form>
+  <div title="Sign in">
+    <div class="text-center">Sign in</div>
+    <form class="mt-3">
       <b-form-group class="mt-2" label="Username:" label-for="loginUsername">
         <b-form-input
+          class="shadow-none"
+          :state="state"
+          @blur="onBlur"
           placeholder="your email/username"
           id="loginUsername"
           v-model="loginUsername"
         ></b-form-input>
+        <div style="color: #dc3545" v-show="state === false">
+          Please enter something
+        </div>
       </b-form-group>
-      <b-form-group label="Password:" label-for="loginPassword">
+      <b-form-group class="mt-2" label="Password:" label-for="loginPassword">
         <b-form-input
+          class="shadow-none"
+          :state="state1"
+          @blur="onBlur1"
           placeholder="your password"
           id="loginPassword"
           type="password"
           v-model="loginPassword"
         ></b-form-input>
+        <div style="color: #dc3545" v-show="state1 === false">
+          Please enter something
+        </div>
       </b-form-group>
-      <div class="d-flex justify-content-end">
-        <b-button class="form-btn mt-2" @click.prevent="login"
-          >Sign in</b-button
-        >
-      </div>
+      <b-button
+        variant="success"
+        style="width: 100%"
+        class="mt-3"
+        @click.prevent="register"
+        >Sign in</b-button
+      >
     </form>
-  </b-tab>
+  </div>
 </template>
 
 <script>
@@ -35,9 +50,17 @@ export default {
       confirmPassword: "",
       loginUsername: "",
       loginPassword: "",
+      state: null,
+      state1: null,
     };
   },
   methods: {
+    onBlur() {
+      this.state = this.loginUsername === "" ? false : true;
+    },
+    onBlur1() {
+      this.state1 = this.loginPassword === "" ? false : true;
+    },
     login() {
       // Xử lý đăng nhập ở đây
       axios

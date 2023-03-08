@@ -1,5 +1,5 @@
 <template>
-  <div class="user">
+  <div class="user mt-5">
     <TodoList />
   </div>
 </template>
@@ -17,17 +17,7 @@ export default {
 </script>
 <style>
 .user {
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  background-image: url(@/assets/background-home.jpg);
-}
-.home__content {
-  width: 60%;
-  max-width: 500px;
-  margin: 5% auto;
-}
-label {
-  color: #eec6c6;
 }
 </style>

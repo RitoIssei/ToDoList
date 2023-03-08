@@ -1,136 +1,195 @@
 <template>
-  <div class="main">
-    <h1>List Task</h1>
-    <form v-on:submit.prevent="addTask" class="input mt-3">
-      <b-form-input
-        v-model="title"
-        type="text"
-        placeholder="Enter a new task"
-      />
-      <b-form-input
-        v-model="description"
-        type="text"
-        placeholder="Enter a description"
-      />
-      <b-form-input
-        v-model="date"
-        type="date"
-        placeholder="Enter a description"
-      />
-      <b-button class="mt-3" type="submit">Add Task</b-button>
-    </form>
-    <div>
-      <Search />
+  <b-card class="main shadow">
+    <h1>TO DO LIST</h1>
+    <div class="d-flex justify-content-between mt-4">
+      <b-button class="" v-b-modal.modal-2>Add Task</b-button>
+      <span>Hi, {{ this.$route.params.id }}</span>
     </div>
     <div>
-      <Calendar />
+      <div class="mt-3 d-flex justify-content-between">
+        <div style="margin-right: 10px">
+          <div>Task name</div>
+          <b-form-input
+            type="search"
+            class="mt-2"
+            v-model="searchTerm"
+            style="height: 34px"
+          ></b-form-input>
+        </div>
+        <div class="">
+          <div>Date</div>
+          <date-picker
+            class="mt-2"
+            v-model="dateChose"
+            range
+            style="width: 220px; margin-right: 10px"
+          ></date-picker>
+        </div>
+      </div>
+      <b-button variant="primary" style="width: 150px" class="mt-3"
+        >Search</b-button
+      >
+      <b-button
+        @click="todayChange"
+        variant="dark"
+        style="width: 150px; margin-left: 20px"
+        class="mt-3"
+        >Task To Day</b-button
+      >
     </div>
-    <b-list-group>
+
+    <b-list-group class="mt-3" v-if="filteredTasks.length > 0">
       <b-list-group-item
-        v-for="(task, index) in tasks"
+        v-for="(task, index) in filteredTasks"
         :key="index"
-        class="d-flex flex-row mt-3"
+        class="d-flex align-items-center justify-content-between"
+        :class="{ selected: selectedItemIndex === index }"
       >
         <div
-          :class="{ 'task-done': task.done }"
-          class="TaskDetail"
+          class="d-flex align-items-center"
+          @click.stop="task.done = !task.done"
+          style="height: 36px; width: 30px"
+        >
+          <input type="checkbox" v-model="task.done" class="task-checkbox" />
+          <i
+            class="mdi mdi-checkbox-blank-outline"
+            :class="{
+              checked: task.done,
+            }"
+          ></i
+          ><i
+            class="mdi mdi-checkbox-marked"
+            :class="{
+              unchecked: !task.done,
+            }"
+          ></i>
+        </div>
+        <div
+          @click="openModal(task, index)"
           v-b-modal.modal-1
-          @click="openModal(task)"
+          :class="{
+            'task-done': task.done,
+          }"
+          @mouseover="selectItem(index)"
+          @mouseleave="unselectItem"
+          class="task-detail flex-grow-1 text-truncate"
         >
           {{ task.title }}
         </div>
-        <div class="TaskDone">
-          <b-form-checkbox v-model="task.done" />
-        </div>
+        <b-button
+          style="margin-left: 10px"
+          variant="danger"
+          @click="deleteChoseTask(index)"
+          ><i style="color: black" class="mdi mdi-delete"></i
+        ></b-button>
       </b-list-group-item>
     </b-list-group>
-    <ModalTaskDetail :task="selectedTask" />
-  </div>
+    <b-card class="text-center mt-3" v-else
+      >No tasks available for the selected time.</b-card
+    >
+    <ModalTaskDetail :task="selectedTask" :index="selectedIndex" />
+    <ModalAddTask />
+  </b-card>
 </template>
 
 <script>
 import ModalTaskDetail from "@/components/ModalTaskDetail.vue";
+import ModalAddTask from "@/components/ModalAddTask.vue";
 import Search from "@/components/Search.vue";
-import Calendar from "@/components/Calendar.vue";
+import DatePicker from "vue2-datepicker";
+import "vue2-datepicker/index.css";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "TodoList",
   components: {
     ModalTaskDetail,
+    ModalAddTask,
     Search,
-    Calendar,
+    DatePicker,
   },
   computed: {
-    tasks() {
-      return this.$store.state.tasks;
+    ...mapState(["tasks"]),
+    filteredTasks: function () {
+      return this.tasks.filter((task) => {
+        return task.date >= this.dateChose[0] && task.date <= this.dateChose[1];
+      });
     },
   },
   data() {
     return {
-      title: "",
-      description: "",
-      date: Date(),
       selectedTask: {},
+      selectedIndex: -1,
+      selectedItemIndex: -1,
+      searchTerm: "",
+      dateChose: [
+        new Date(2023, 1, 28),
+        new Date(new Date().getTime() + 86400000),
+      ],
     };
   },
   methods: {
-    openModal(task) {
-      this.selectedTask = task;
-      //this.$refs.myModal.show();
-      console.log(task);
+    search() {
+      // Do search logic here
+      console.log("Search term:", this.searchTerm);
     },
-    addTask() {
-      const newTask = {
-        userId: this.$route.params.id,
-        title: this.title,
-        description: this.description,
-        date: this.date,
-        done: false,
-      };
-      this.$store.dispatch("addTask", newTask);
-      console.log(newTask);
-      this.title = "";
-      this.description = "";
-      this.date = "";
-      this.done = false;
+    ...mapActions(["deleteTask"]),
+    todayChange() {
+      this.dateChose = [new Date(), new Date(new Date().getTime() + 86400000)];
+      console.log(this.dateChose);
+    },
+    selectItem(index) {
+      this.selectedItemIndex = index;
+    },
+    unselectItem() {
+      this.selectedItemIndex = null;
+    },
+    openModal(task, index) {
+      this.selectedTask = task;
+      this.selectedIndex = index;
+      //this.$refs.myModal.show();
+    },
+    deleteChoseTask(index) {
+      this.deleteTask(index);
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
-.input {
-  display: flex;
-}
 .main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 5% auto 0 auto;
-  padding: 3% 5% 5% 5%;
-  width: 900px;
-  background-color: var(--bs-gray-dark);
-  border-radius: 10px;
+  width: 600px;
 }
 .task-done {
   text-decoration: line-through;
 }
-.TaskDone {
-  border-left: 2px solid var(--bs-gray-dark);
-  height: 100%;
-  width: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-self: stretch;
+.task-checkbox {
+  display: none;
 }
-.TaskDetail {
-  flex-basis: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.checked {
+  display: none;
+}
+.unchecked {
+  display: none;
 }
 h1 {
-  color: var(--bs-gray-100);
+  text-align: center;
+}
+.b-list-group-item:hover {
+  background-color: black;
+  cursor: pointer;
+}
+.selected {
+  background-color: #6c757d;
+}
+@media only screen and (max-width: 600px) {
+  .task-detail {
+    width: 240px;
+  }
+  .main {
+    border: 0;
+    width: unset;
+    min-width: 360px;
+  }
 }
 </style>
