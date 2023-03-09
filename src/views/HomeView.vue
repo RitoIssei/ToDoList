@@ -3,15 +3,15 @@
     <b-col class="mt-5">
       <h1 class="text-center">TO DO LIST</h1>
       <b-card class="main shadow mt-5">
-        <SignIn v-show="show" />
-        <SignUp v-show="!show" />
-        <div v-show="show" class="text-center mt-3">
+        <SignIn v-show="showLogin" />
+        <SignUp v-show="!showLogin" />
+        <div v-show="showLogin" class="text-center mt-3">
           Don't have an account?
-          <a @click.prevent="show = !show" href="">Register here</a>
+          <a @click.prevent="showLogin = !showLogin" href="">Register here</a>
         </div>
-        <div v-show="!show" class="text-center mt-3">
+        <div v-show="!showLogin" class="text-center mt-3">
           Do you already have an account?
-          <a @click.prevent="show = !show" href="">Login here</a>
+          <a @click.prevent="showLogin = !showLogin" href="">Login here</a>
         </div>
       </b-card>
     </b-col>
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      show: true,
+      showLogin: true,
     };
   },
 };

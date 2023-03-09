@@ -14,7 +14,8 @@
         <div>Date</div>
         <date-picker
           class="mt-2"
-          v-model="dateChose"
+          :value="dateChose"
+          @input="changeDate"
           range
           style="width: 220px; margin-right: 10px"
         ></date-picker>
@@ -24,6 +25,7 @@
       >Search</b-button
     >
     <b-button
+      @click="todayChange"
       variant="dark"
       style="width: 150px; margin-left: 20px"
       class="mt-3"
@@ -43,13 +45,22 @@ export default {
   data() {
     return {
       searchTerm: "",
-      dateChose: [new Date(), new Date()],
+      dateChose: [new Date(), new Date(new Date().getTime() + 86400000)],
     };
   },
   methods: {
     search() {
       // Do search logic here
       console.log("Search term:", this.searchTerm);
+    },
+    todayChange() {
+      this.dateChose = [new Date(), new Date(new Date().getTime() + 86400000)];
+      console.log(this.dateChose);
+      this.$emit("eventName", this.dateChose);
+    },
+    changeDate(event) {
+      this.dateChose = event;
+      this.$emit("eventName", this.dateChose);
     },
   },
 };

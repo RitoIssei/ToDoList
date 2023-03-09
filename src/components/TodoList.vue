@@ -2,42 +2,12 @@
   <b-card class="main shadow">
     <h1>TO DO LIST</h1>
     <div class="d-flex justify-content-between mt-4">
-      <b-button class="" v-b-modal.modal-2>Add Task</b-button>
-      <span>Hi, {{ this.$route.params.id }}</span>
-    </div>
-    <div>
-      <div class="mt-3 d-flex justify-content-between">
-        <div style="margin-right: 10px">
-          <div>Task name</div>
-          <b-form-input
-            type="search"
-            class="mt-2"
-            v-model="searchTerm"
-            style="height: 34px"
-          ></b-form-input>
-        </div>
-        <div class="">
-          <div>Date</div>
-          <date-picker
-            class="mt-2"
-            v-model="dateChose"
-            range
-            style="width: 220px; margin-right: 10px"
-          ></date-picker>
-        </div>
-      </div>
-      <b-button variant="primary" style="width: 150px" class="mt-3"
-        >Search</b-button
+      <b-button @click="openModal({}, -1)" v-b-modal.modal-taskDetail
+        >Add Task</b-button
       >
-      <b-button
-        @click="todayChange"
-        variant="dark"
-        style="width: 150px; margin-left: 20px"
-        class="mt-3"
-        >Task To Day</b-button
-      >
+      <span>Hi, {{ this.$route.params.username }}</span>
     </div>
-
+    <search v-on:eventName="handleEvent" />
     <b-list-group class="mt-3" v-if="filteredTasks.length > 0">
       <b-list-group-item
         v-for="(task, index) in filteredTasks"
@@ -48,7 +18,6 @@
         <div
           class="d-flex align-items-center"
           @click.stop="task.done = !task.done"
-          style="height: 36px; width: 30px"
         >
           <input type="checkbox" v-model="task.done" class="task-checkbox" />
           <i
@@ -66,7 +35,7 @@
         </div>
         <div
           @click="openModal(task, index)"
-          v-b-modal.modal-1
+          v-b-modal.modal-taskDetail
           :class="{
             'task-done': task.done,
           }"
@@ -88,13 +57,11 @@
       >No tasks available for the selected time.</b-card
     >
     <ModalTaskDetail :task="selectedTask" :index="selectedIndex" />
-    <ModalAddTask />
   </b-card>
 </template>
 
 <script>
 import ModalTaskDetail from "@/components/ModalTaskDetail.vue";
-import ModalAddTask from "@/components/ModalAddTask.vue";
 import Search from "@/components/Search.vue";
 import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
@@ -104,7 +71,6 @@ export default {
   name: "TodoList",
   components: {
     ModalTaskDetail,
-    ModalAddTask,
     Search,
     DatePicker,
   },
@@ -129,15 +95,17 @@ export default {
     };
   },
   methods: {
+    handleEvent(dateChose) {
+      // Xử lý dữ liệu từ component con
+      this.dateChose = dateChose;
+      console.log(dateChose);
+    },
     search() {
       // Do search logic here
-      console.log("Search term:", this.searchTerm);
+      console.log(this.searchTerm);
     },
     ...mapActions(["deleteTask"]),
-    todayChange() {
-      this.dateChose = [new Date(), new Date(new Date().getTime() + 86400000)];
-      console.log(this.dateChose);
-    },
+
     selectItem(index) {
       this.selectedItemIndex = index;
     },

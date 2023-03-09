@@ -1,6 +1,11 @@
 <template>
   <div>
-    <b-modal id="modal-1" title="Task detail" ok-title="Save" @ok="saveChanges">
+    <b-modal
+      id="modal-taskDetail"
+      title="Task detail"
+      ok-title="Save"
+      @ok="saveChanges"
+    >
       <b-form-group label="Title:" class="mt-3">
         <b-form-input :value="task.title" @input="editTitle"></b-form-input>
       </b-form-group>
@@ -39,7 +44,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["updateTask"]),
+    ...mapActions(["updateTask", "addTask"]),
     editTitle(event) {
       this.newTitle = event;
       console.log(event);
@@ -53,22 +58,40 @@ export default {
       console.log(event);
     },
     saveChanges() {
-      if (this.newDescription === "") {
-        this.newDescription = this.task.description;
+      if (this.index >= 0) {
+        if (this.newDescription === "") {
+          this.newDescription = this.task.description;
+        }
+        if (this.newTitle === "") {
+          this.newTitle = this.task.title;
+        }
+        const newTask = {
+          userId: this.$route.params.id,
+          title: this.newTitle,
+          description: this.newDescription,
+          date: this.newDate,
+          done: false,
+        };
+        console.log(new Date());
+        console.log(this.task.date);
+        this.updateTask({ index: this.index, task: newTask });
+      } else {
+        if (this.newTitle === "") {
+          this.newTitle = "Task title";
+        }
+        const newTask = {
+          userId: this.$route.params.id,
+          title: this.newTitle,
+          description: this.newDescription,
+          date: this.newDate,
+          done: false,
+        };
+        this.addTask(newTask);
+        //store.dispatch("addTask", newTask);
+        this.newTitle = "";
+        this.newDescription = "";
+        this.newDate = "";
       }
-      if (this.newTitle === "") {
-        this.newTitle = this.task.title;
-      }
-      const newTask = {
-        userId: this.$route.params.id,
-        title: this.newTitle,
-        description: this.newDescription,
-        date: this.newDate,
-        done: false,
-      };
-      console.log(new Date());
-      console.log(this.task.date);
-      this.updateTask({ index: this.index, task: newTask });
     },
   },
 };
