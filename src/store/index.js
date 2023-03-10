@@ -35,7 +35,7 @@ export default new Vuex.Store({
     ADD_TASK(state, task) {
       state.tasks.push(task)
     },
-    UPDATE_TASK(state, { index, task }) {
+    UPDATE_TASK(state, { index, task}) {
       state.tasks.splice(index, 1, task)
     },
     DELETE_TASK(state, index) {
@@ -46,13 +46,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addTask({ commit }, task) {
+    addTask( task) {
       commit('ADD_TASK', task)
     },
-    updateTask({ commit }, { index, task }) {
+    updateTask({ index, task }) {
       commit('UPDATE_TASK', { index, task })
     },
-    deleteTask({ commit }, index) {
+    deleteTask( index) {
       commit('DELETE_TASK', index)
     },
     async fetchTasks({ commit }) {

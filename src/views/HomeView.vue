@@ -1,21 +1,27 @@
 <template>
-  <b-row>
-    <b-col class="mt-5">
-      <h1 class="text-center">TO DO LIST</h1>
-      <b-card class="main shadow mt-5">
-        <SignIn v-show="showLogin" />
-        <SignUp v-show="!showLogin" />
-        <div v-show="showLogin" class="text-center mt-3">
-          Don't have an account?
-          <a @click.prevent="showLogin = !showLogin" href="">Register here</a>
+  <b-container class="my-5 pt-sm-5">
+    <b-row class="justify-content-center">
+      <b-col class="col-md-8 col-lg-6 col-xl-5">
+        <div class="bg-header py-4">
+          <div class="title text-center">TO DO LIST</div>
         </div>
-        <div v-show="!showLogin" class="text-center mt-3">
-          Do you already have an account?
-          <a @click.prevent="showLogin = !showLogin" href="">Login here</a>
+        <b-card class="main">
+          <SignIn v-show="showLogin" />
+          <SignUp v-show="!showLogin" />
+        </b-card>
+        <div class="mt-5">
+          <p v-show="showLogin" class="text-center">
+            Don't have an account?
+            <a @click.prevent="showLogin = !showLogin" href="">Register here</a>
+          </p>
+          <p v-show="!showLogin" class="text-center">
+            Do you already have an account?
+            <a @click.prevent="showLogin = !showLogin" href="">Login here</a>
+          </p>
         </div>
-      </b-card>
-    </b-col>
-  </b-row>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -36,13 +42,14 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .main {
-  flex-grow: 1;
-  max-width: 600px;
-  margin: auto;
+  border: none;
 }
-/* .my-tab {
-  height: 360px;
-} */
+.title {
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 700;
+  padding-left: 10px;
+}
 </style>

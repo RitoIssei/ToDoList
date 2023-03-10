@@ -1,6 +1,8 @@
 <template>
   <div title="Sign in">
-    <div class="text-center">Sign in</div>
+    <div style="font-size: 18px; margin: 24px 0" class="text-center">
+      Sign in
+    </div>
     <form class="mt-3">
       <b-form-group class="mt-2" label="Username:" label-for="loginUsername">
         <b-form-input

@@ -1,5 +1,5 @@
 <template>
-  <b-card class="main shadow">
+  <div class="main">
     <h1>TO DO LIST</h1>
     <div class="d-flex justify-content-between mt-4">
       <b-button @click="openModal({}, -1)" v-b-modal.modal-taskDetail
@@ -18,6 +18,7 @@
         <div
           class="d-flex align-items-center"
           @click.stop="task.done = !task.done"
+          style="padding-right: 10px"
         >
           <input type="checkbox" v-model="task.done" class="task-checkbox" />
           <i
@@ -57,7 +58,7 @@
       >No tasks available for the selected time.</b-card
     >
     <ModalTaskDetail :task="selectedTask" :index="selectedIndex" />
-  </b-card>
+  </div>
 </template>
 
 <script>
@@ -125,9 +126,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.main {
-  width: 600px;
-}
 .task-done {
   text-decoration: line-through;
 }
@@ -153,11 +151,6 @@ h1 {
 @media only screen and (max-width: 600px) {
   .task-detail {
     width: 240px;
-  }
-  .main {
-    border: 0;
-    width: unset;
-    min-width: 360px;
   }
 }
 </style>

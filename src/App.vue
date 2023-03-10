@@ -10,4 +10,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+body {
+  background-color: #f8f9fa !important;
+}
 </style>
