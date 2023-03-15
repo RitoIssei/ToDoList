@@ -3,30 +3,7 @@ import api from '@/plugins/Axios'
 export default {
   namespaced: true,
   state: {
-    tasks: [
-        {
-          id: 100,
-            title:
-              "Test 1 Test 1 Test 1 Test 1Test 1Test 1Test 1Test 1Test 1Test 1Test 1Test 1Test 1Test 1",
-              descrip: "Test 1",
-            date: new Date(2023, 1, 28),
-            done: false,
-        },
-        {
-          id: 101,
-            title: "Test 2",
-            descrip: "Test 2",
-            date: new Date(2023, 1, 29),
-            done: false,
-        },
-        {
-          id: 102,
-            title: "Test 3",
-            descrip: "Test 3",
-            date: new Date(2023, 1, 30),
-            done: false,
-        },
-    ]
+    tasks: []
     },
     mutations: {
     ADD_TASK(state, task) {
@@ -36,7 +13,7 @@ export default {
       state.tasks.splice(index, 1, task)
     },
     DELETE_TASK(state, index) {
-      state.tasks.splice(index, 1)
+      state.tasks = state.tasks.filter((task) => task.id !== index);
     },
     SET_TASKS(state, tasks) {
       state.tasks = tasks;
@@ -60,10 +37,7 @@ export default {
         const index = state.tasks.findIndex(t => t.id === task.id)
         const response = await api.put(`tasks/${task.id}`, task)
         const updatedTask = response.data
-        const date = new Date(updatedTask.deadline)
-        date.setDate(date.getDate() + 1)
-        updatedTask.date = date
-        commit('UPDATE_TASK', { index, task: updatedTask })
+        commit('UPDATE_TASK', { index, updatedTask })
       } catch (error) {
         console.log(error)
       }
