@@ -9,7 +9,7 @@
       <b-form-input v-model="task.title"></b-form-input>
     </b-form-group>
     <b-form-group label="Description:" class="mt-3">
-      <b-form-input v-model="task.descrip"></b-form-input>
+      <b-form-input v-model="task.description"></b-form-input>
     </b-form-group>
     <b-form-group label="Date:" class="mt-3">
       <date-picker v-model="task.date"></date-picker>
@@ -35,33 +35,34 @@ export default {
     return {};
   },
   methods: {
-    ...mapActions("TasksModule", ["updateTask", "addTask"]),
+    ...mapActions(["updateTask", "addTask"]),
     saveChanges() {
       if (this.index >= 0) {
         const newTask = {
-          id: this.task.id,
+          userId: this.$route.params.username,
           title: this.task.title,
-          descrip: this.task.descrip,
+          description: this.task.description,
           date: this.task.date,
           done: false,
         };
         console.log(new Date());
         console.log(this.task.date);
-        this.updateTask(newTask);
+        this.updateTask({ index: this.index, task: newTask });
       } else {
         if (this.newTitle === "") {
           this.newTitle = "Task title";
         }
-        console.log(this.task.date);
         const newTask = {
+          userId: this.$route.params.username,
           title: this.task.title,
-          descrip: this.task.descrip,
-          deadline: this.task.date,
+          description: this.task.description,
+          date: this.task.date,
+          done: false,
         };
         this.addTask(newTask);
         //store.dispatch("addTask", newTask);
         this.newTitle = "";
-        this.descrip = "";
+        this.newDescription = "";
         this.newDate = "";
       }
     },

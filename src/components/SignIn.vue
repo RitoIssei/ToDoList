@@ -11,7 +11,7 @@
           @blur="onBlur"
           placeholder="your email/username"
           id="loginUsername"
-          v-model="loginUsername"
+          v-model="user.nickname"
         ></b-form-input>
         <div style="color: #dc3545" v-show="state === false">
           Please enter something
@@ -25,7 +25,7 @@
           placeholder="your password"
           id="loginPassword"
           type="password"
-          v-model="loginPassword"
+          v-model="user.password"
         ></b-form-input>
         <div style="color: #dc3545" v-show="state1 === false">
           Please enter something
@@ -35,7 +35,7 @@
         variant="success"
         style="width: 100%"
         class="mt-3"
-        @click.prevent="register"
+        @click.prevent="login"
         >Sign in</b-button
       >
     </form>
@@ -44,14 +44,16 @@
 
 <script>
 import axios from "axios";
+import { mapActions } from "vuex";
+
 export default {
   name: "SignIn",
   data() {
     return {
-      isLoggedIn: false,
-      confirmPassword: "",
-      loginUsername: "",
-      loginPassword: "",
+      user: {
+        nickname: "",
+        password: "",
+      },
       state: null,
       state1: null,
     };
@@ -65,26 +67,18 @@ export default {
     },
     login() {
       // Xử lý đăng nhập ở đây
-      axios
-        .post(
-          "/api/login",
-          {
-            loginUsername: this.loginUsername,
-            loginPassword: this.loginPassword,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((response) => {
-          this.isLoggedIn = true;
-          this.$router.push({ name: "User", params: { id: 123 } });
-        })
-        .catch((error) => {
-          this.errorMessage = error.response.data.message;
-        });
+      console.log(this.tasks);
+      const data = { user: this.user };
+      this.$store.dispatch("UserModule/apiLogin", data).then((result) => {
+        if (result.success) {
+          this.$router.push({
+            name: "User",
+            params: { username: this.user.nickname },
+          });
+        } else {
+          console.log(result.error);
+        }
+      });
     },
   },
 };

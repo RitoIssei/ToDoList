@@ -25,7 +25,7 @@
           @blur="onBlur1"
           placeholder="your username"
           id="username-input"
-          v-model="user.username"
+          v-model="user.nickname"
         ></b-form-input>
         <div style="color: #dc3545" v-show="state1 === false">
           Please enter something
@@ -82,7 +82,7 @@ export default {
     return {
       user: {
         email: "",
-        username: "",
+        nickname: "",
         password: "",
       },
       isLoggedIn: false,
@@ -113,26 +113,17 @@ export default {
       } else {
         // Gửi yêu cầu đăng ký tài khoản đến server
         console.log(this.user);
-        axios
-          .post(
-            "http://localhost:3000/user",
-            {
-              name: this.user.username,
-              email: this.user.email,
-              password: this.user.password,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          )
-          .then((response) => {
-            console.log(response.data);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        const data = { user: this.user };
+        this.$store.dispatch("UserModule/apiRegister", data).then((result) => {
+          if (result.success) {
+            this.$router.push({
+              name: "User",
+              params: { username: this.user.nickname },
+            });
+          } else {
+            console.log(result.error);
+          }
+        });
       }
     },
   },

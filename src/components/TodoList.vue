@@ -1,19 +1,21 @@
 <template>
-  <div class="main">
+  <div>
     <h1>TO DO LIST</h1>
     <div class="d-flex justify-content-between mt-4">
       <b-button @click="openModal({}, -1)" v-b-modal.modal-taskDetail
         >Add Task</b-button
       >
-      <span>Hi, {{ this.$route.params.username }}</span>
+      <span
+        >Hi, <a href="#">{{ this.$route.params.username }}</a>
+      </span>
     </div>
     <search v-on:eventName="handleEvent" />
     <b-list-group class="mt-3" v-if="filteredTasks.length > 0">
       <b-list-group-item
-        v-for="(task, index) in filteredTasks"
-        :key="index"
+        v-for="task in filteredTasks"
+        :key="task.id"
         class="d-flex align-items-center justify-content-between"
-        :class="{ selected: selectedItemIndex === index }"
+        :class="{ selected: selectedItemIndex === task.id }"
       >
         <div
           class="d-flex align-items-center"
@@ -35,12 +37,12 @@
           ></i>
         </div>
         <div
-          @click="openModal(task, index)"
+          @click="openModal(task, task.id)"
           v-b-modal.modal-taskDetail
           :class="{
             'task-done': task.done,
           }"
-          @mouseover="selectItem(index)"
+          @mouseover="selectItem(task.id)"
           @mouseleave="unselectItem"
           class="task-detail flex-grow-1 text-truncate"
         >
@@ -49,7 +51,7 @@
         <b-button
           style="margin-left: 10px"
           variant="danger"
-          @click="deleteChoseTask(index)"
+          @click="deleteChoseTask(task.id)"
           ><i style="color: black" class="mdi mdi-delete"></i
         ></b-button>
       </b-list-group-item>
@@ -76,9 +78,15 @@ export default {
     DatePicker,
   },
   computed: {
-    ...mapState(["tasks"]),
+    ...mapState("TasksModule", {
+      tasks: (state) => state.tasks,
+    }),
+    // tasks() {
+    //   return this.$store.state.TasksModule.tasks;
+    // },
     filteredTasks: function () {
       return this.tasks.filter((task) => {
+        console.log(task.date);
         return task.date >= this.dateChose[0] && task.date <= this.dateChose[1];
       });
     },
@@ -95,6 +103,10 @@ export default {
       ],
     };
   },
+  created() {
+    console.log(123);
+    this.fetchTasks();
+  },
   methods: {
     handleEvent(dateChose) {
       // Xử lý dữ liệu từ component con
@@ -105,7 +117,7 @@ export default {
       // Do search logic here
       console.log(this.searchTerm);
     },
-    ...mapActions(["deleteTask"]),
+    ...mapActions("TasksModule", ["deleteTask", "fetchTasks"]),
 
     selectItem(index) {
       this.selectedItemIndex = index;
@@ -114,11 +126,12 @@ export default {
       this.selectedItemIndex = null;
     },
     openModal(task, index) {
-      this.selectedTask = task;
+      this.selectedTask = Object.assign({}, task);
       this.selectedIndex = index;
-      //this.$refs.myModal.show();
+      //this.$refs.modalTask.show();
     },
     deleteChoseTask(index) {
+      console.log(index);
       this.deleteTask(index);
     },
   },
@@ -147,10 +160,5 @@ h1 {
 }
 .selected {
   background-color: #6c757d;
-}
-@media only screen and (max-width: 600px) {
-  .task-detail {
-    width: 240px;
-  }
 }
 </style>

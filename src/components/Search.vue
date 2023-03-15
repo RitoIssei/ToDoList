@@ -45,7 +45,10 @@ export default {
   data() {
     return {
       searchTerm: "",
-      dateChose: [new Date(), new Date(new Date().getTime() + 86400000)],
+      dateChose: [
+        new Date(2023, 1, 28),
+        new Date(new Date().getTime() + 86400000),
+      ],
     };
   },
   methods: {

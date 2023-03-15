@@ -1,6 +1,6 @@
 <template>
   <b-container class="my-5 pt-sm-5">
-    <b-card>
+    <b-card style="max-width: 600px; margin: auto">
       <TodoList />
     </b-card>
   </b-container>
